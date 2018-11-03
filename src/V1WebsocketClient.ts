@@ -1,8 +1,8 @@
 import {EventEmitter} from "events";
 import WebSocket = require('ws');
 import {legacyProductId} from "./util";
+import delay from "delay";
 import pako = require("pako");
-
 
 export class V1WebsocketClient extends EventEmitter {
     private websocketUri: string;
@@ -36,7 +36,10 @@ export class V1WebsocketClient extends EventEmitter {
 
     private onOpen() {
         console.log(`Connected to ${this.websocketUri}`);
-        this.send({event: 'ping'});
+        const interval = setInterval(() => {
+            this.send({event: "ping"});
+        }, 5000);
+        this.socket!.on('close', () => clearInterval(interval));
         this.emit('open');
     }
 
