@@ -1,7 +1,6 @@
 import {EventEmitter} from "events";
 import WebSocket = require('ws');
 import {legacyProductId} from "./util";
-import delay from "delay";
 import pako = require("pako");
 
 export class V1WebsocketClient extends EventEmitter {
@@ -57,10 +56,17 @@ export class V1WebsocketClient extends EventEmitter {
         this.emit('close');
     }
 
-    public subscribeSpotDepth(instrument_id: string) {
+    subscribeSpotDepth(instrument_id: string) {
         const productId = legacyProductId(instrument_id);
         this.send({event: "addChannel", channel: `ok_sub_spot_${productId}_depth`})
     }
 
+    close() {
+        if (this.socket) {
+            console.log(`Closing websocket connection...`);
+            this.socket.close();
+            this.socket = undefined;
+        }
+    }
 
 }
