@@ -61,6 +61,11 @@ export class V1WebsocketClient extends EventEmitter {
         this.send({event: "addChannel", channel: `ok_sub_spot_${productId}_depth`})
     }
 
+    subscribeSpotDeals(instrument_id: string) {
+        const productId = legacyProductId(instrument_id);
+        this.send({event: "addChannel", channel: `ok_sub_spot_${productId}_deals`})
+    }
+
     close() {
         if (this.socket) {
             console.log(`Closing websocket connection...`);
