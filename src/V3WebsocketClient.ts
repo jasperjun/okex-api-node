@@ -4,7 +4,6 @@ import pako = require("pako");
 import crypto = require("crypto");
 
 
-
 export class V3WebsocketClient extends EventEmitter {
     private websocketUri: string;
     private socket?: WebSocket;
@@ -37,7 +36,16 @@ export class V3WebsocketClient extends EventEmitter {
         this.socket!.send(request);
     }
 
+    subscribe(args: any) {
+        if (args instanceof String) {
+            args = Array.of(args);
+        }
+        this.send({ op: "subscribe", args });
+    }
 
+    unsubscribe(args: any) {
+        this.send({ op: "unsubscribe", args });
+    }
 
     private send(messageObject: any) {
         if (!this.socket) throw Error('socket is not open');
@@ -63,8 +71,6 @@ export class V3WebsocketClient extends EventEmitter {
         this.socket = undefined;
         this.emit('close');
     }
-
-
 
     close() {
         if (this.socket) {

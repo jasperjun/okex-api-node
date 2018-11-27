@@ -17,4 +17,9 @@ export class V3PublicClient {
         return this.axios.get('/api/spot/v3/instruments')
             .then(res => res.data)
     }
+
+    async getSwapInstruments(): Promise<Array<Instrument>> {
+        return this.axios.get('/api/swap/v3/instruments')
+            .then(res => res.data)
+    }
 }
