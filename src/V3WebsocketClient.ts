@@ -36,8 +36,15 @@ export class V3WebsocketClient extends EventEmitter {
         this.socket!.send(request);
     }
 
-    subscribe(subscribe:string) {
-        this.send({event: "subscribe", subscribe: subscribe});
+    subscribe(args: any) {
+        if (args instanceof String) {
+            args = Array.of(args);
+        }
+        this.send({ op: "subscribe", args });
+    }
+
+    unsubscribe(args: any) {
+        this.send({ op: "unsubscribe", args });
     }
 
     private send(messageObject: any) {
