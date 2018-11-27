@@ -7,6 +7,7 @@ import crypto = require("crypto");
 export class V3WebsocketClient extends EventEmitter {
     private websocketUri: string;
     private socket?: WebSocket;
+    private interval?: NodeJS.Timeout | null;
 
     constructor(
         websocketURI = 'wss://real.okex.com:10442/ws/v3'
@@ -58,10 +59,28 @@ export class V3WebsocketClient extends EventEmitter {
 
     private onOpen() {
         console.log(`Connected to ${this.websocketUri}`);
+        this.initTimer();
         this.emit('open');
     }
 
+    private initTimer() {
+        this.interval = setInterval(() => {
+            if (this.socket) {
+                this.socket.send('ping');
+            }
+        }, 5000);
+    }
+
+    private resetTimer() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+            this.initTimer();
+        }
+    }
+
     private onMessage(data: WebSocket.Data) {
+        this.resetTimer();
         if (data instanceof String) {
             this.emit('message', data)
         } else {
@@ -72,6 +91,10 @@ export class V3WebsocketClient extends EventEmitter {
     private onClose(code: number, reason: string) {
         console.log(`Websocket connection is closed.code=${code},reason=${reason}`);
         this.socket = undefined;
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
         this.emit('close');
     }
 
@@ -79,6 +102,10 @@ export class V3WebsocketClient extends EventEmitter {
         if (this.socket) {
             console.log(`Closing websocket connection...`);
             this.socket.close();
+            if (this.interval) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
             this.socket = undefined;
         }
     }
