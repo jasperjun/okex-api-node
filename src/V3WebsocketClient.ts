@@ -44,6 +44,9 @@ export class V3WebsocketClient extends EventEmitter {
     }
 
     unsubscribe(args: any) {
+        if (args instanceof String) {
+            args = Array.of(args);
+        }
         this.send({ op: "unsubscribe", args });
     }
 
