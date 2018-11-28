@@ -1,6 +1,6 @@
 {
-  "name": "okex-node",
-  "version": "0.0.9",
+  "name": "okex-api-node",
+  "version": "0.1.0",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,7 +12,7 @@
     "postversion": "git push && git push --tags"
   },
   "keywords": [],
-  "author": "",
+  "author": "okex",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^3.1.6"

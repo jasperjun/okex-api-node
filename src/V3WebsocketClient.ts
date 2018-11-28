@@ -13,7 +13,7 @@ export class V3WebsocketClient extends EventEmitter {
         websocketURI = 'wss://real.okex.com:10442/ws/v3'
     ) {
         super();
-        this.websocketUri = websocketURI
+        this.websocketUri = websocketURI;
     }
 
     connect() {
@@ -25,8 +25,8 @@ export class V3WebsocketClient extends EventEmitter {
         console.log(`Connecting to ${this.websocketUri}`);
 
         this.socket.on('open', () => this.onOpen());
-        this.socket.on('close', (code, reason) => this.onClose(code, reason))
-        this.socket.on('message', data => this.onMessage(data))
+        this.socket.on('close', (code, reason) => this.onClose(code, reason));
+        this.socket.on('message', data => this.onMessage(data));
     }
 
     login(apiKey: string, apiSecret: string, passphrase: string) {
@@ -47,7 +47,7 @@ export class V3WebsocketClient extends EventEmitter {
 
     private send(messageObject: any) {
         if (!this.socket) throw Error('socket is not open');
-        this.socket.send(JSON.stringify(messageObject))
+        this.socket.send(JSON.stringify(messageObject));
 
     }
 
@@ -75,11 +75,13 @@ export class V3WebsocketClient extends EventEmitter {
 
     private onMessage(data: WebSocket.Data) {
         this.resetTimer();
-        if (data instanceof String) {
-            this.emit('message', data)
-        } else {
-            this.emit('message', pako.inflateRaw(data as any, {to: 'string'}))
+        if (!(data instanceof String)) {
+            data = pako.inflateRaw(data as any, {to: 'string'});
         }
+        if (data === 'pong') {
+            return;
+        }
+        this.emit('message', data);
     }
 
     private onClose(code: number, reason: string) {
